@@ -1,0 +1,28 @@
+{
+  "name": "clesson-de/silverstripe-gridfield-pro",
+  "description": "The Silverstripe GridField Pro Package offers a collection of PHP classes and extensions that make working with GridFields in Silverstripe CMS more convenient.",
+  "type": "silverstripe-vendormodule",
+  "keywords": [
+    "silverstripe",
+    "gridfield",
+    "form"
+  ],
+  "authors": [
+    {
+      "name": "Kai Feldmaier",
+      "email": "kai.feldmaier@clesson.de",
+      "homepage": "https://clesson.de"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "silverstripe/framework": "^4 | ^5"
+  },
+  "extra": {
+    "expose": [
+      "client/dist"
+    ]
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev"
+}

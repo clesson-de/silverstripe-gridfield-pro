@@ -1,0 +1,3 @@
+de:
+  Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction:
+    ToggledFeedback: 'Der Wert wurde umgestellt.'
