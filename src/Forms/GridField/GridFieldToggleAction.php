@@ -16,11 +16,14 @@ use SilverStripe\Forms\GridField\GridField_FormAction;
  * ```php
  * $gridField = $fields->fieldByName('Items');
  * $gridFieldConfig = $gridField->getConfig();
- * $gridFieldConfig->addComponent(new \Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction('Active', 'Deactivate', 'Activate'));
+ * $gridFieldConfig->addComponent(new \Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction('Active', 'Activated', 'Yes', 'No'));
  * ```
  */
 class GridFieldToggleAction extends AbstractGridFieldComponent implements GridField_ColumnProvider, GridField_ActionProvider
 {
+
+    public const ACTION_NAME = 'toggle_action';
+
     /**
      * @var string
      */
@@ -39,6 +42,11 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
     /**
      * @var string
      */
+    private string $columnTitle;
+
+    /**
+     * @var string
+     */
     private string $trueLabel;
 
     /**
@@ -51,9 +59,10 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      *
      * @param string $columnName Name of the boolean column to be toggled
      */
-    public function __construct(string $columnName, string $trueLabel='Deactivate', string $falseLabel='Activate')
+    public function __construct(string $columnName, string $columnTitle, string $trueLabel = '', string $falseLabel = '')
     {
         $this->columnName = $columnName;
+        $this->columnTitle = $columnTitle;
         $this->trueLabel = $trueLabel;
         $this->falseLabel = $falseLabel;
     }
@@ -65,8 +74,8 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      */
     public function augmentColumns($gridField, &$columns)
     {
-        if (!in_array('ToggleBoolean', $columns)) {
-            $columns[] = 'ToggleBoolean';
+        if (!in_array($this->columnName, $columns)) {
+            $columns[] = $this->columnName;
         }
     }
 
@@ -75,7 +84,9 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      */
     public function getColumnsHandled($gridField)
     {
-        return ['ToggleBoolean'];
+        return [
+            $this->columnName
+        ];
     }
 
     /**
@@ -91,18 +102,29 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
         }
 
         $currentValue = $record->{$this->columnName};
-        $label = $currentValue ? $this->trueLabel : $this->falseLabel;
-        $action = $currentValue ? static::DEACTIVATE : static::ACTIVATE;
+        $extraClasses = ['btn', 'btn-secondary', 'action-toggle-boolean', 'icon'];
+        if ($currentValue) {
+            $label = $this->trueLabel;
+            $action = static::DEACTIVATE;
+            $extraClasses[] = 'font-icon-check-mark-circle';
+        } else {
+            $label = $this->falseLabel;
+            $action = static::ACTIVATE;
+            $extraClasses[] = 'font-icon-block';
+        }
 
         $button = GridField_FormAction::create(
             $gridField,
-            "ToggleBoolean{$record->ID}",
+            implode('-', [static::ACTION_NAME,$this->columnName,$record->ID]), // name
             $label,
-            'toggleBoolean',
-            ['RecordID' => $record->ID, 'Action' => $action]
+            self::ACTION_NAME,
+            [
+                'record_id' => $record->ID,
+                'action' => $action,
+                'column_name' => $this->columnName
+            ]
         );
-
-        $button->addExtraClass('btn btn-secondary action-toggle-boolean');
+        $button->addExtraClass(implode(' ', $extraClasses));
         return $button->Field();
     }
 
@@ -114,7 +136,9 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      */
     public function getColumnAttributes($gridField, $record, $columnName)
     {
-        return ['class' => 'grid-field-toggle-boolean'];
+        return [
+            'class' => 'grid-field-toggle-boolean'
+        ];
     }
 
     /**
@@ -124,7 +148,12 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      */
     public function getColumnMetadata($gridField, $columnName)
     {
-        return ['title' => ucfirst($this->columnName)];
+        if ($columnName === $this->columnName) {
+            return [
+                'title' => $this->columnTitle
+            ];
+        }
+        return parent::getColumnMetadata($gridField, $columnName);
     }
 
     /**
@@ -133,7 +162,7 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      */
     public function getActions($gridField)
     {
-        return ['toggleBoolean'];
+        return [self::ACTION_NAME];
     }
 
     /**
@@ -145,16 +174,16 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
      */
     public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
-        if ($actionName === 'toggleboolean') {
-            $record = $gridField->getList()->byID($arguments['RecordID']);
+        if ($actionName === self::ACTION_NAME) {
+            $record = $gridField->getList()->byID($arguments['record_id']);
+            $columnName = $arguments['column_name'];
             if ($record && $record->canEdit()) {
-                $record->{$this->columnName} = !$record->{$this->columnName};
+                $record->{$columnName} = ($arguments['action'] === static::ACTIVATE ? true : false);
                 $record->write();
-
 
                 Controller::curr()->getResponse()
                     ->setStatusCode(200)
-                    ->addHeader('X-Status', _t(__CLASS__.'.ToggledFeedback', 'The value has been changed.'));
+                    ->addHeader('X-Status', _t(__CLASS__ . '.ToggledFeedback', 'The value {columnTitle} has been changed.', ['columnTitle' => $this->columnTitle]));
 
             }
         }
