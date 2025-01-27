@@ -2,13 +2,13 @@
 
 namespace Clesson\Silverstripe\Forms\GridField;
 
-use Clesson\CodeGenerator\Forms\GridFieldAction_Toggle;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 use SilverStripe\Forms\GridField\GridField_FormAction;
+use SilverStripe\ORM\DataObject;
 
 /**
  * This class is a GridField component that toggles the value of a Boolean column.
@@ -16,7 +16,7 @@ use SilverStripe\Forms\GridField\GridField_FormAction;
  * ```php
  * $gridField = $fields->fieldByName('Items');
  * $gridFieldConfig = $gridField->getConfig();
- * $gridFieldConfig->addComponent(new \Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction('Active', 'Activated', 'Yes', 'No'));
+ * $gridFieldConfig->addComponent(new \Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction('Active', 'Deactivate', 'Activate'));
  * ```
  */
 class GridFieldToggleAction extends AbstractGridFieldComponent implements GridField_ColumnProvider, GridField_ActionProvider
@@ -55,16 +55,28 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
     private string $falseLabel;
 
     /**
+     * @var bool Specifies that only one of the records in the specified column may be true
+     */
+    private bool $unique;
+
+    /**
      * Constructor.
      *
      * @param string $columnName Name of the boolean column to be toggled
      */
-    public function __construct(string $columnName, string $columnTitle, string $trueLabel = '', string $falseLabel = '')
+    public function __construct(string $columnName, string $columnTitle, string $trueLabel = '', string $falseLabel = '', bool $unique = false)
     {
         $this->columnName = $columnName;
         $this->columnTitle = $columnTitle;
         $this->trueLabel = $trueLabel;
         $this->falseLabel = $falseLabel;
+        $this->unique = $unique;
+    }
+
+    public function setUnique(bool $unique): GridFieldToggleAction
+    {
+        $this->unique = $unique;
+        return $this;
     }
 
     /**
@@ -115,13 +127,14 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
 
         $button = GridField_FormAction::create(
             $gridField,
-            implode('-', [static::ACTION_NAME,$this->columnName,$record->ID]), // name
+            implode('-', [static::ACTION_NAME, $this->columnName, $record->ID]), // name
             $label,
             self::ACTION_NAME,
             [
                 'record_id' => $record->ID,
                 'action' => $action,
-                'column_name' => $this->columnName
+                'column_name' => $this->columnName,
+                'unique' => $this->unique,
             ]
         );
         $button->addExtraClass(implode(' ', $extraClasses));
@@ -175,17 +188,49 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
     public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
         if ($actionName === self::ACTION_NAME) {
-            $record = $gridField->getList()->byID($arguments['record_id']);
+            $recordID = $arguments['record_id'];
             $columnName = $arguments['column_name'];
-            if ($record && $record->canEdit()) {
-                $record->{$columnName} = ($arguments['action'] === static::ACTIVATE ? true : false);
-                $record->write();
+            $unique = $arguments['unique'];
+            $action = $arguments['action'];
+            $value = $action === static::ACTIVATE ? true : false;
+            $manipulated = 0;
+            if ($unique) {
+                if ($value && $records = $gridField->getList()) {
+                    foreach ($records as $record) {
+                        if ($this->toggleRecord($record, $columnName, ($record->ID === $recordID))) {
+                            $manipulated++;
+                        }
+                    }
+                }
+            } else if ($record = $gridField->getList()->byID($recordID)) {
+                if ($this->toggleRecord($record, $columnName, $value)) {
+                    $manipulated++;
+                }
+            }
 
+            if ($manipulated) {
                 Controller::curr()->getResponse()
                     ->setStatusCode(200)
                     ->addHeader('X-Status', _t(__CLASS__ . '.ToggledFeedback', 'The value {columnTitle} has been changed.', ['columnTitle' => $this->columnTitle]));
-
             }
         }
     }
+
+    /**
+     * @param $record
+     * @param string $columnName
+     * @param bool $value
+     * @return bool
+     */
+    protected function toggleRecord(DataObject $record, string $columnName, bool $value): bool
+    {
+        $manipulated = false;
+        if ($record && $record->canEdit()) {
+            $record->{$columnName} = $value;
+            $record->write();
+            $manipulated = true;
+        }
+        return $manipulated;
+    }
+
 }

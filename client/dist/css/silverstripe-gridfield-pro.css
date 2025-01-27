@@ -1,0 +1,27 @@
+
+
+.gridfield-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--tile-width), 1fr));
+    gap: var(--tile-gap);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.gridfield-tiles .gridfield-tiles--item {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    padding: 10px;
+    height: var(--tile-height);
+    box-sizing: border-box;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.gridfield-tiles .gridfield-tiles--item:hover {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
