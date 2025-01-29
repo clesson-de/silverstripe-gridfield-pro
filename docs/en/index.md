@@ -4,21 +4,35 @@ Silverstripe GridField Pro
 Toggle boolean values inside tables
 -------------------
 
-The `GridFieldToggleAction` component provides a more convinient solution to toggle the values of a boolean column right inside the grid, without having to open the detail view.
+The `GridFieldToggleAction` component provides a more convinient solution to toggle the values of a boolean column right 
+inside the grid, without having to open the detail view.
 
 ```php
 use Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction;
 
 $gridField = $fields->fieldByName('Items');
 $gridFieldConfig = $gridField->getConfig();
-// Switch the boolean value of the "Active" property
-$gridFieldConfig->addComponent(new GridFieldToggleAction('Active', _t(__CLASS__.'.Active', 'Deactivate'), _t(__CLASS__.'.Inactive', 'Activate')));
+
+// let's assume we want to switch the Boolean value of the “Active” property...
+$component = new GridFieldToggleAction(
+    'Active', // the name of the property in the model
+    _t(__CLASS__.'.Active', 'Deactivate'), // The label that is displayed when the value of “Active” is true
+    _t(__CLASS__.'.Inactive', 'Activate')   // The label that is displayed when the value of “Active” is false
+);
+
+// Assuming that only one of the models in the gridfield may be true and all others must be false, we can solve this
+// with setUnique:
+$component->setUnique(true);
+
+// add the component    
+$gridFieldConfig->addComponent($component);
 ```
 
 Display records in boxes instead of rows
 -------------------
 
-The `GridFieldTiles` component enables data to be displayed in tiles. You have full control over the appearance of each tile at all times.
+The `GridFieldTiles` component enables data to be displayed in tiles. You have full control over the appearance of each 
+tile at all times.
 
 This component is ideal for displaying an image gallery or listing contacts with avatar images, etc.
 
@@ -28,7 +42,8 @@ use Clesson\Silverstripe\Forms\GridField\GridFieldTiles;
 $gridField = $fields->fieldByName('Items');
 $gridFieldConfig = $gridField->getConfig();
 
-// Use a callback function to render the content of each tile
+// Use a callback function to render the content of the individual tiles.
+// Alternatively, you can also specify the path to a template file.
 $callbackTileRenderer = function($Item, $Index, $Total){
 return <<<EOD
 <div>
@@ -39,13 +54,22 @@ return <<<EOD
 </div>
 EOD;
 };
-$gridFieldConfig->addComponent(new GridFieldTiles($callbackTileRenderer));
+
+// Create an instance of the Tiles component
+$component = new GridFieldTiles("before", $callbackTileRenderer, 200, 300, 15);
+
+// if you do not want the user to be able to jump to the DetailForm, set the component to editable = false.
+$component->setEditable(false);
+
+// add the component to the GridField config
+$gridFieldConfig->addComponent($component);
 ```
 
 Display records in calendar
 -------------------
 Would you like to organize your data records chronologically? Then use the `GridFieldCalendar` component. The calendar 
-is rendered using the famous [FullCalendar](https://fullcalendar.io) library. You can customize the appearance of each record in the calendar.
+is rendered using the famous [FullCalendar](https://fullcalendar.io) library. You can customize the appearance of each 
+record in the calendar.
 
 ```php
 use Clesson\Silverstripe\Forms\GridField\GridFieldCalendar;

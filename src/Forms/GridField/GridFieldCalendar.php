@@ -329,7 +329,7 @@ class GridFieldCalendar implements GridField_HTMLProvider, GridField_URLHandler
             'AttributesHTML' => $this->getAttributesHTML($gridField),
         ]);
         return [
-            'before' => $template->process($data)
+            $this->_targetFragment => $template->process($data)
         ];
     }
 

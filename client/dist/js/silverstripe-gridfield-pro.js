@@ -5,10 +5,16 @@
         $("div.gridfield-tiles>.gridfield-tiles--item").entwine({
             onmatch: function () {
                 this._super();
+                const url = this.data('href');
+                if (url) {
+                    this.addClass('active');
+                }
             },
             onclick: function () {
                 const url = this.data('href');
-                document.location.href = url;
+                if (url) {
+                    document.location.href = url;
+                }
             },
         });
 
