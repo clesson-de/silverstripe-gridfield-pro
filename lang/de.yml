@@ -1,3 +1,11 @@
 de:
+  Clesson\Silverstripe\Forms\GridField\GridFieldCalendar:
+    ButtonTextMultiMonth: '3 Monate'
+    ButtonTextToday: 'Heute'
+    ButtonTextMonth: 'Monat'
+    ButtonTextWeek: 'Woche'
+    ButtonTextDay: 'Tag'
+    ButtonTextList: 'Liste'
+    ButtonTextReload: 'Neu laden'
   Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction:
     ToggledFeedback: 'Der Wert {columnTitle} wurde umgestellt.'

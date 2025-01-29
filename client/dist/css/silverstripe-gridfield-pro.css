@@ -25,3 +25,39 @@
 .gridfield-tiles .gridfield-tiles--item:hover {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+
+.gridfield-calendar {
+    background-color: transparent;
+
+
+    --fc-small-font-size: .85em;
+    --fc-page-bg-color: var(--white);
+    --fc-neutral-bg-color: hsla(0, 0%, 82%, .3);
+    --fc-neutral-text-color: #43536d;
+    --fc-border-color: #ced5e1;
+    --fc-button-text-color: var(--white);
+    --fc-button-bg-color: var(--primary);
+    --fc-button-border-color: var(--primary);
+    --fc-button-hover-bg-color: #006400;
+    --fc-button-hover-border-color: #005700;
+    --fc-button-active-bg-color: var(--light);
+    --fc-button-active-border-color: var(--light);
+    --fc-event-bg-color: var(--blue);
+    --fc-event-border-color: var(--blue);
+    --fc-event-text-color: var(--white);
+    --fc-event-selected-overlay-color: rgba(0, 0, 0, .25);
+    --fc-more-link-bg-color: #d0d0d0;
+    --fc-more-link-text-color: inherit;
+    --fc-event-resizer-thickness: 8px;
+    --fc-event-resizer-dot-total-width: 8px;
+    --fc-event-resizer-dot-border-width: 1px;
+    --fc-non-business-color: hsla(0, 0%, 84%, .3);
+    --fc-bg-event-color: #8fdf82;
+    --fc-bg-event-opacity: 0.3;
+    --fc-highlight-color: rgba(188, 232, 241, .3);
+    --fc-today-bg-color: var(--light);
+    --fc-now-indicator-color: red;
+}
+.gridfield-calendar a {
+    color: #435370 !important;
+}
