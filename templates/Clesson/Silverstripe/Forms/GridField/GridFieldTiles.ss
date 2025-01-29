@@ -3,7 +3,7 @@
 
 <div class="gridfield-tiles" style="--tile-height:{$TileHeight}px;--tile-width:{$TileWidth}px;--tile-gap:{$TileGap}px">
     <% loop $Items %>
-        <div class="gridfield-tiles--item" data-href="{$Link}">
+        <div class="gridfield-tiles--item"<% if $Link %> data-href="{$Link}"<% end_if %>>
             {$Content}
         </div>
     <% end_loop %>

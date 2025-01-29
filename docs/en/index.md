@@ -105,3 +105,23 @@ $calendar->setColorFormat(function ($record) {
 });
 $gridFieldConfig->addComponent($calendar);
 ```
+
+Filter data records by a leading character in the property
+-------------------
+The GridField_CharFilter consists of a series of buttons, each of which represents a single character. If a button is 
+selected (e.g. “F”), only records whose name begins with an “F”, for example, are listed.
+
+```php
+use Clesson\Silverstripe\Forms\GridField\GridField_CharFilter;
+
+$gridField = $fields->fieldByName('Items');
+$gridFieldConfig = $gridField->getConfig();
+
+// Create an instance of the CharFilter component
+// The “Name” property is filtered here. The list of characters that are displayed as buttons is specified as a string.
+// An array of individual characters or no specification at all would also be possible.
+$component = new GridField_CharFilter("before", "Name", "a-z|A-Z|0-9");
+
+// add the component to the GridField config
+$gridFieldConfig->addComponent($component);
+```
