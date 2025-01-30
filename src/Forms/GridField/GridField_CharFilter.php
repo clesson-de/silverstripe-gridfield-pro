@@ -58,7 +58,7 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
      * @param string $property
      * @param mixed $chars
      */
-    public function __construct(string $targetFragment = 'before', string $property = 'Name', mixed $chars = null)
+    public function __construct(string $targetFragment = 'before', string $property = 'Name', mixed $chars = '')
     {
         $this->setTargetFragment($targetFragment);
         $this->setProperty($property);
