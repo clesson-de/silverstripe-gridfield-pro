@@ -33,6 +33,8 @@ use SilverStripe\View\SSViewer;
 class GridField_CharFilter extends AbstractGridFieldComponent implements GridField_HTMLProvider, GridField_ActionProvider, GridField_DataManipulator
 {
 
+    public const ACTION_NAME = 'char_filter';
+
     /**
      * @var array The list of all characters that are to be displayed as buttons.
      */
@@ -224,7 +226,7 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
                 $gridField,
                 'gridfield_charfilter-' . $key,
                 $char,
-                'charfilter',
+                self::ACTION_NAME,
                 ['char' => $selected ? '' : $char]
             );
             $charField->addExtraClass('action_gridfield_charfilter');
@@ -252,7 +254,7 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
      */
     public function getActions($gridField)
     {
-        return ['charfilter'];
+        return [self::ACTION_NAME];
     }
 
     /**
@@ -260,7 +262,7 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
      */
     public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
-        if ($actionName == 'charfilter') {
+        if ($actionName === self::ACTION_NAME) {
             if (isset($arguments['char'])) {
                 $this->setSelectedChar($arguments['char']);
             }
