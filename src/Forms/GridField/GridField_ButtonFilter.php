@@ -9,7 +9,7 @@ use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_DataManipulator;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
-use SilverStripe\ORM\SS_List;
+use SilverStripe\Model\List\SS_List;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\SSViewer;
 

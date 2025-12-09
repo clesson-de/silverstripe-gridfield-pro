@@ -18,14 +18,14 @@
     padding: 10px;
     height: var(--tile-height);
     box-sizing: border-box;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
     cursor: default;
 }
 .gridfield-tiles .gridfield-tiles--item.active {
     cursor: pointer;
 }
 .gridfield-tiles .gridfield-tiles--item.active:hover {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
 }
 
 .gridfield-calendar {
@@ -33,20 +33,20 @@
 
 
     --fc-small-font-size: .85em;
-    --fc-page-bg-color: var(--white);
+    --fc-page-bg-color: var(--bs-white);
     --fc-neutral-bg-color: hsla(0, 0%, 82%, .3);
     --fc-neutral-text-color: #43536d;
     --fc-border-color: #ced5e1;
-    --fc-button-text-color: var(--white);
-    --fc-button-bg-color: var(--primary);
-    --fc-button-border-color: var(--primary);
+    --fc-button-text-color: var(--bs-white);
+    --fc-button-bg-color: var(--bs-primary);
+    --fc-button-border-color: var(--bs-primary);
     --fc-button-hover-bg-color: #006400;
     --fc-button-hover-border-color: #005700;
-    --fc-button-active-bg-color: var(--light);
-    --fc-button-active-border-color: var(--light);
-    --fc-event-bg-color: var(--blue);
-    --fc-event-border-color: var(--blue);
-    --fc-event-text-color: var(--white);
+    --fc-button-active-bg-color: var(--bs-light);
+    --fc-button-active-border-color: var(--bs-light);
+    --fc-event-bg-color: var(--bs-blue);
+    --fc-event-border-color: var(--bs-blue);
+    --fc-event-text-color: var(--bs-white);
     --fc-event-selected-overlay-color: rgba(0, 0, 0, .25);
     --fc-more-link-bg-color: #d0d0d0;
     --fc-more-link-text-color: inherit;
@@ -57,8 +57,8 @@
     --fc-bg-event-color: #8fdf82;
     --fc-bg-event-opacity: 0.3;
     --fc-highlight-color: rgba(188, 232, 241, .3);
-    --fc-today-bg-color: var(--light);
-    --fc-now-indicator-color: red;
+    --fc-today-bg-color: var(--bs-light);
+    --fc-now-indicator-color: var(--bs-red);
 }
 .gridfield-calendar a {
     color: #435370 !important;
@@ -68,7 +68,7 @@
 
 
 .gridfield-charfilter {
-    border: 1px solid var(--light);
+    border: 1px solid var(--bs-light);
     background-color: transparent;
     display: flex;
     flex-direction: column;
@@ -83,23 +83,23 @@
     margin: -1px;
 }
 .gridfield-charfilter > .gridfield-charfilter--chars > button.action {
-    border: 1px solid var(--light);
+    border: 1px solid var(--bs-light);
     background: transparent;
     font-size: 13px;
     font-weight: 500;
-    color: var(--secondary);
+    color: var(--bs-secondary);
     aspect-ratio: 1;
     max-width: 42px;
     max-height: 42px;
 }
 .gridfield-charfilter > .gridfield-charfilter--chars > button.action.active {
-    background-color: var(--info);
-    border-color: var(--info);
-    color: var(--white);
+    background-color: var(--bs-info);
+    border-color: var(--bs-info);
+    color: var(--bs-white);
 }
 .gridfield-charfilter > .gridfield-charfilter--chars > button.action.active:hover,
 .gridfield-charfilter > .gridfield-charfilter--chars > button.action:hover {
-    background-color: var(--secondary);
-    border-color: var(--secondary);
-    color: var(--white);
+    background-color: var(--bs-secondary);
+    border-color: var(--bs-secondary);
+    color: var(--bs-white);
 }

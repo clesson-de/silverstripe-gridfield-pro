@@ -9,8 +9,8 @@ use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_DataManipulator;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
-use SilverStripe\ORM\SS_List;
-use SilverStripe\View\ArrayData;
+use SilverStripe\Model\List\SS_List;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\View\SSViewer;
 
 
@@ -87,7 +87,7 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
             $chars = $this->enumerateChars($chars);
         }
         $chars = array_map('trim', $chars);
-        $chars = array_filter($chars, function($char){
+        $chars = array_filter($chars, function ($char) {
             return strlen($char) === 1;
         });
         $this->_chars = $chars ? $chars : $this->defaultChars();
@@ -179,16 +179,15 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
      * @param string $pattern
      * @return array
      */
-    protected function enumerateChars(string $pattern):array
+    protected function enumerateChars(string $pattern): array
     {
         $chars = [];
         if (str_contains($pattern, '|')) {
-            foreach (explode('|', $pattern) as $subpattern)
-            {
+            foreach (explode('|', $pattern) as $subpattern) {
                 $chars = array_merge($chars, $this->enumerateChars($subpattern));
             }
         } else if (str_contains($pattern, '-')) {
-            list($from,$to) = array_pad(explode('-', $pattern), 2, '');
+            list($from, $to) = array_pad(explode('-', $pattern), 2, '');
             if (strlen($from) === 1 && strlen($to) === 1) {
                 for ($char = ord($from); $char <= ord($to); ++$char) {
                     $chars[] = chr($char);
@@ -219,9 +218,9 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
 
         $forTemplate = new ArrayData([]);
         $forTemplate->Fields = new FieldList();
-
+        $selectedChar = $this->getSelectedChar();
         foreach ($this->getChars() as $key => $char) {
-            $selected = $char == $this->getSelectedChar();
+            $selected = ($char == $selectedChar);
             $charField = new GridField_FormAction(
                 $gridField,
                 'gridfield_charfilter-' . $key,
@@ -230,11 +229,9 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
                 ['char' => $selected ? '' : $char]
             );
             $charField->addExtraClass('action_gridfield_charfilter');
-
             if ($selected) {
                 $charField->addExtraClass('active');
             }
-
             $forTemplate->Fields->push($charField);
         }
 
