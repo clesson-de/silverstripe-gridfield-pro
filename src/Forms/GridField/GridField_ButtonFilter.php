@@ -10,7 +10,7 @@ use SilverStripe\Forms\GridField\GridField_DataManipulator;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
 use SilverStripe\Model\List\SS_List;
-use SilverStripe\View\ArrayData;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\View\SSViewer;
 
 /**
@@ -34,6 +34,9 @@ use SilverStripe\View\SSViewer;
  * // add the component to the GridField config
  * $gridFieldConfig->addComponent($component);
  * ```
+ *
+ * @package Clesson\GridfieldPro
+ * @subpackage Forms
  */
 class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridField_HTMLProvider, GridField_DataManipulator, GridField_ActionProvider
 {

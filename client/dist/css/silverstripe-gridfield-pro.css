@@ -103,3 +103,47 @@
     border-color: var(--bs-secondary);
     color: var(--bs-white);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+.type-filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5385rem;
+}
+.type-filter > button.action {
+    border: 1px solid #e9f0f4;
+    background: #fff;
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #004e7f;
+    aspect-ratio: 1;
+}
+.type-filter > button.action:hover {
+    background-color: #d8e4eb;
+    border-color: #004e7f;
+    color: #004e7f;
+}
+.type-filter > button.action.active {
+    background-color: #004e7f;
+    border-color: #004e7f;
+    color: #fff;
+}
+.type-filter {
+    justify-content: left;
+}
+.type-filter > button.action {
+    aspect-ratio: unset;
+    max-width: fit-content;
+    padding: 8px;
+}

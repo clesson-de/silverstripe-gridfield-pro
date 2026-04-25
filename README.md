@@ -9,4 +9,10 @@ This module provides a number of useful grid field components:
 composer require clesson-de/silverstripe-gridfield-pro:^1
 ```
 
+Then run:
+
+```bash
+composer vendor-expose
+```
+
 See [docs/en/index.md](docs/en/index.md) for documentation and examples.

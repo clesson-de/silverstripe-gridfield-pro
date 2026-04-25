@@ -29,6 +29,9 @@ use SilverStripe\View\SSViewer;
  * // add the component to the GridField config
  * $gridFieldConfig->addComponent($component);
  * ```
+ *
+ * @package Clesson\GridfieldPro
+ * @subpackage Forms
  */
 class GridField_CharFilter extends AbstractGridFieldComponent implements GridField_HTMLProvider, GridField_ActionProvider, GridField_DataManipulator
 {

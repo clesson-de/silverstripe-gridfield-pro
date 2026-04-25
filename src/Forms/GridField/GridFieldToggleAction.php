@@ -18,6 +18,9 @@ use SilverStripe\ORM\DataObject;
  * $gridFieldConfig = $gridField->getConfig();
  * $gridFieldConfig->addComponent(new \Clesson\Silverstripe\Forms\GridField\GridFieldToggleAction('Active', 'Deactivate', 'Activate'));
  * ```
+ *
+ * @package Clesson\GridfieldPro
+ * @subpackage Forms
  */
 class GridFieldToggleAction extends AbstractGridFieldComponent implements GridField_ColumnProvider, GridField_ActionProvider
 {
@@ -211,7 +214,7 @@ class GridFieldToggleAction extends AbstractGridFieldComponent implements GridFi
             if ($manipulated) {
                 Controller::curr()->getResponse()
                     ->setStatusCode(200)
-                    ->addHeader('X-Status', _t(__CLASS__ . '.ToggledFeedback', 'The value {columnTitle} has been changed.', ['columnTitle' => $this->columnTitle]));
+                    ->addHeader('X-Status', _t(__CLASS__ . '.TOGGLED_FEEDBACK', 'The value {columnTitle} has been changed.', ['columnTitle' => $this->columnTitle]));
             }
         }
     }

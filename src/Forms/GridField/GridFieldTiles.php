@@ -5,9 +5,9 @@ namespace Clesson\Silverstripe\Forms\GridField;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\View\ArrayData;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\View\SSViewer;
 
 /**
@@ -42,6 +42,9 @@ use SilverStripe\View\SSViewer;
  * // add the component to the GridField config
  * $gridFieldConfig->addComponent($component);
  * ```
+ *
+ * @package Clesson\GridfieldPro
+ * @subpackage Forms
  */
 class GridFieldTiles implements GridField_HTMLProvider
 {

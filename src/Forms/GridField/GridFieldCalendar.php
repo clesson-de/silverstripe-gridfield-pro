@@ -14,9 +14,15 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\View\ArrayData;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\View\SSViewer;
 
+/**
+ * A GridField component that displays records in a calendar view.
+ *
+ * @package Clesson\GridfieldPro
+ * @subpackage Forms
+ */
 class GridFieldCalendar implements GridField_HTMLProvider, GridField_URLHandler
 {
 
@@ -353,16 +359,16 @@ class GridFieldCalendar implements GridField_HTMLProvider, GridField_URLHandler
                     'right' => 'reloadButton multiMonth,dayGridMonth,timeGridWeek,timeGridDay', // Buttons für verschiedene Ansichten
                 ],
                 'buttonText' => (object)[
-                    'multiMonth' => _t(__CLASS__ . '.ButtonTextMultiMonth', '3 months'),
-                    'today' => _t(__CLASS__ . '.ButtonTextToday', 'Today'),
-                    'month' => _t(__CLASS__ . '.ButtonTextMonth', 'Month'),
-                    'week' => _t(__CLASS__ . '.ButtonTextWeek', 'Week'),
-                    'day' => _t(__CLASS__ . '.ButtonTextDay', 'Day'),
-                    'list' => _t(__CLASS__ . '.ButtonTextList', 'List'),
+                    'multiMonth' => _t(__CLASS__ . '.BUTTON_TEXT_MULTI_MONTH', '3 months'),
+                    'today' => _t(__CLASS__ . '.BUTTON_TEXT_TODAY', 'Today'),
+                    'month' => _t(__CLASS__ . '.BUTTON_TEXT_MONTH', 'Month'),
+                    'week' => _t(__CLASS__ . '.BUTTON_TEXT_WEEK', 'Week'),
+                    'day' => _t(__CLASS__ . '.BUTTON_TEXT_DAY', 'Day'),
+                    'list' => _t(__CLASS__ . '.BUTTON_TEXT_LIST', 'List'),
                 ],
                 'customButtons' => (object)[
                     'reloadButton' => (object)[
-                        'text' => _t(__CLASS__ . '.ButtonTextReload', 'Reload'),
+                        'text' => _t(__CLASS__ . '.BUTTON_TEXT_RELOAD', 'Reload'),
                         'click' => 'function() { alert("clicked the custom button!"); }',
                     ],
                 ],
