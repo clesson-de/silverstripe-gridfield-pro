@@ -42,7 +42,7 @@ use SilverStripe\View\SSViewer;
 class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridField_HTMLProvider, GridField_DataManipulator, GridField_ActionProvider
 {
 
-    public const ACTION_NAME = 'button_filter';
+    public const ACTION_NAME_PREFIX = 'button_filter';
 
     /**
      * @var bool Specify whether multiple selection should be possible (true) or not (false)..
@@ -182,6 +182,19 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
     }
 
     /**
+     * Returns the unique action name for this filter instance.
+     *
+     * Incorporates the property name so that multiple ButtonFilter components
+     * on the same GridField do not interfere with each other.
+     *
+     * @return string
+     */
+    public function getActionName(): string
+    {
+        return static::ACTION_NAME_PREFIX . '_' . md5($this->_property);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getHTMLFragments($gridField)
@@ -194,9 +207,9 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
 
             $typeField = new GridField_FormAction(
                 $gridField,
-                'gridfield_buttonfilter-' . md5((string) $filterValue),
+                'gridfield_buttonfilter-' . md5($this->_property . '_' . $filterValue),
                 $filterTitle,
-                static::ACTION_NAME,
+                $this->getActionName(),
                 ['value' => (string) $filterValue]
             );
             $typeField->addExtraClass('action_gridfield_buttonfilter');
@@ -228,7 +241,7 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
      */
     public function getActions($gridField)
     {
-        return [static::ACTION_NAME];
+        return [$this->getActionName()];
     }
 
     /**
@@ -246,7 +259,7 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
      */
     public function handleAction(GridField $gridField, $actionName, $arguments, $data): void
     {
-        if ($actionName !== static::ACTION_NAME) {
+        if ($actionName !== $this->getActionName()) {
             return;
         }
 
