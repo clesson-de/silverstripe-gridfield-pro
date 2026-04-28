@@ -9,6 +9,7 @@ use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_DataManipulator;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridState_Data;
 use SilverStripe\Model\List\SS_List;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\View\SSViewer;
@@ -185,29 +186,39 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
      */
     public function getHTMLFragments($gridField)
     {
-        $selectedValues = $this->getSelectedValues();
+        $selectedValues = $this->resolveStateValues($gridField);
         $fields = new FieldList();
+
         foreach ($this->getValues() as $filterValue => $filterTitle) {
-            $selected = in_array($filterValue, $selectedValues);
+            $selected = in_array((string) $filterValue, $selectedValues, true);
+
             $typeField = new GridField_FormAction(
                 $gridField,
-                'gridfield_buttonfilter-' . md5($filterValue),
+                'gridfield_buttonfilter-' . md5((string) $filterValue),
                 $filterTitle,
                 static::ACTION_NAME,
-                ['selected_classes' => $selected ? '' : $filterTitle]
+                ['value' => (string) $filterValue]
             );
             $typeField->addExtraClass('action_gridfield_buttonfilter');
+
             if ($selected) {
                 $typeField->addExtraClass('active');
             }
+
             $fields->push($typeField);
         }
+
+        if ($form = $gridField->getForm()) {
+            $fields->setForm($form);
+        }
+
         $forTemplate = new ArrayData([
-            'Fields' => $fields
+            'Fields' => $fields,
         ]);
         $template = SSViewer::get_templates_by_class($this, '', __CLASS__);
+
         return [
-            $this->_targetFragment => $forTemplate->renderWith($template)
+            $this->_targetFragment => $forTemplate->renderWith($template),
         ];
     }
 
@@ -221,32 +232,106 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
     }
 
     /**
+     * Handles toggle logic for the clicked button value.
+     *
+     * In multiselect mode the value is toggled in the current selection array.
+     * In single-select mode the value is either activated or deactivated.
+     * The resulting selection is persisted in the GridField state.
+     *
      * @param GridField $gridField
-     * @param $actionName
-     * @param $arguments
-     * @param $data
+     * @param string $actionName
+     * @param array $arguments
+     * @param array $data
      * @return void
      */
-    public function handleAction(GridField $gridField, $actionName, $arguments, $data)
+    public function handleAction(GridField $gridField, $actionName, $arguments, $data): void
     {
-        if ($actionName === static::ACTION_NAME) {
-            if (array_key_exists('selected_classes', $arguments)) {
-                $this->setSelectedValues($arguments['selected_classes']);
+        if ($actionName !== static::ACTION_NAME) {
+            return;
+        }
+
+        $value = (string) ($arguments['value'] ?? '');
+        $current = $this->resolveStateValues($gridField);
+
+        if ($this->_multiselect) {
+            if (in_array($value, $current, true)) {
+                $current = array_values(array_diff($current, [$value]));
+            } else {
+                $current[] = $value;
+            }
+        } else {
+            if (in_array($value, $current, true)) {
+                $current = [];
+            } else {
+                $current = [$value];
             }
         }
+
+        $this->persistStateValues($gridField, $current);
     }
 
     /**
+     * Filters the data list to only include records matching the selected values.
+     *
      * @param GridField $gridField
      * @param SS_List $dataList
      * @return SS_List
      */
-    public function getManipulatedData(GridField $gridField, SS_List $dataList)
+    public function getManipulatedData(GridField $gridField, SS_List $dataList): SS_List
     {
-        if ($selectedValues = $this->getSelectedValues()) {
-            //echo 'type = "' . (string)$this->_selectedType.'"<br>';
+        $selectedValues = $this->resolveStateValues($gridField);
+
+        if (!empty($selectedValues)) {
             return $dataList->filter([$this->getProperty() => $selectedValues]);
         }
+
         return $dataList;
+    }
+
+    /**
+     * Returns the state key used to store the selection in the GridField state.
+     *
+     * Uses the property name to allow multiple ButtonFilter instances on the same GridField.
+     *
+     * @return string
+     */
+    private function getStateKey(): string
+    {
+        return 'ButtonFilter_' . md5($this->_property);
+    }
+
+    /**
+     * Reads the current selection from the GridField state.
+     *
+     * Falls back to the default `$_selectedValues` when no state has been persisted yet.
+     *
+     * @param GridField $gridField
+     * @return array
+     */
+    private function resolveStateValues(GridField $gridField): array
+    {
+        $stateKey = $this->getStateKey();
+        $raw = $gridField->State->{$stateKey};
+
+        if ($raw instanceof GridState_Data) {
+            return $this->_selectedValues;
+        }
+
+        $decoded = json_decode((string) $raw, true);
+
+        return is_array($decoded) ? $decoded : $this->_selectedValues;
+    }
+
+    /**
+     * Persists the given selection into the GridField state.
+     *
+     * @param GridField $gridField
+     * @param array $values
+     * @return void
+     */
+    private function persistStateValues(GridField $gridField, array $values): void
+    {
+        $stateKey = $this->getStateKey();
+        $gridField->State->{$stateKey} = json_encode($values);
     }
 }
