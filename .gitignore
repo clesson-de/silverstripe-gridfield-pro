@@ -1,0 +1,28 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Composer
+composer.lock
+
+# npm / yarn
+package-lock.json
+yarn.lock
+
+# Build output
+/client/dist/
+/client/build/
+
+# Environment & config
+.env
+.env.local
+
+# IDE & OS
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
