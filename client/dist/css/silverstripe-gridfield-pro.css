@@ -83,7 +83,8 @@
 }
 .gridfield-charfilter > .gridfield-charfilter--chars > button.action {
     flex: 1 1 0;
-    min-width: 0;
+    min-width: 28px;
+    min-height: 28px;
     max-width: 42px;
     aspect-ratio: 1;
     border: 1px solid var(--bs-light);
@@ -92,6 +93,11 @@
     font-weight: 500;
     color: var(--bs-secondary);
     padding: 0;
+}
+@media (max-width: 991.98px) {
+    .gridfield-charfilter {
+        display: none;
+    }
 }
 .gridfield-charfilter > .gridfield-charfilter--chars > button.action.active {
     background-color: var(--bs-info);
@@ -148,3 +154,4 @@
     max-width: fit-content;
     padding: 8px;
 }
+
