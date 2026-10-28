@@ -1,0 +1,219 @@
+.gridfield-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--tile-width), 1fr));
+    gap: var(--tile-gap);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.gridfield-tiles .gridfield-tiles--item {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    padding: 10px;
+    height: var(--tile-height);
+    box-sizing: border-box;
+    box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+    cursor: default;
+}
+.gridfield-tiles .gridfield-tiles--item.active {
+    cursor: pointer;
+}
+.gridfield-tiles .gridfield-tiles--item.active:hover {
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+}
+
+.gridfield-calendar {
+    background-color: transparent;
+
+
+    --fc-small-font-size: .85em;
+    --fc-page-bg-color: var(--bs-white);
+    --fc-neutral-bg-color: hsla(0, 0%, 82%, .3);
+    --fc-neutral-text-color: #43536d;
+    --fc-border-color: #ced5e1;
+    --fc-button-text-color: var(--bs-white);
+    --fc-button-bg-color: var(--bs-primary);
+    --fc-button-border-color: var(--bs-primary);
+    --fc-button-hover-bg-color: #006400;
+    --fc-button-hover-border-color: #005700;
+    --fc-button-active-bg-color: var(--bs-light);
+    --fc-button-active-border-color: var(--bs-light);
+    --fc-event-bg-color: var(--bs-blue);
+    --fc-event-border-color: var(--bs-blue);
+    --fc-event-text-color: var(--bs-white);
+    --fc-event-selected-overlay-color: rgba(0, 0, 0, .25);
+    --fc-more-link-bg-color: #d0d0d0;
+    --fc-more-link-text-color: inherit;
+    --fc-event-resizer-thickness: 8px;
+    --fc-event-resizer-dot-total-width: 8px;
+    --fc-event-resizer-dot-border-width: 1px;
+    --fc-non-business-color: hsla(0, 0%, 84%, .3);
+    --fc-bg-event-color: #8fdf82;
+    --fc-bg-event-opacity: 0.3;
+    --fc-highlight-color: rgba(188, 232, 241, .3);
+    --fc-today-bg-color: var(--bs-light);
+    --fc-now-indicator-color: var(--bs-red);
+}
+.gridfield-calendar a {
+    color: #435370 !important;
+}
+
+
+
+
+.gridfield-charfilter {
+    border: 1px solid var(--bs-light);
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 1.5385rem 0;
+}
+.gridfield-charfilter > .gridfield-charfilter--chars {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin: -1px;
+}
+.gridfield-charfilter > .gridfield-charfilter--chars > button.action {
+    flex: 1 1 0;
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 42px;
+    aspect-ratio: 1;
+    border: 1px solid var(--bs-light);
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bs-secondary);
+    padding: 0;
+}
+@media (max-width: 991.98px) {
+    .gridfield-charfilter {
+        display: none;
+    }
+}
+.gridfield-charfilter > .gridfield-charfilter--chars > button.action.active {
+    background-color: var(--bs-info);
+    border-color: var(--bs-info);
+    color: var(--bs-white);
+}
+.gridfield-charfilter > .gridfield-charfilter--chars > button.action.active:hover,
+.gridfield-charfilter > .gridfield-charfilter--chars > button.action:hover {
+    background-color: var(--bs-secondary);
+    border-color: var(--bs-secondary);
+    color: var(--bs-white);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.type-filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5385rem;
+}
+.type-filter > button.action {
+    border: 1px solid #e9f0f4;
+    background: #fff;
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #004e7f;
+    aspect-ratio: 1;
+}
+.type-filter > button.action:hover {
+    background-color: #d8e4eb;
+    border-color: #004e7f;
+    color: #004e7f;
+}
+.type-filter > button.action.active {
+    background-color: #004e7f;
+    border-color: #004e7f;
+    color: #fff;
+}
+.type-filter {
+    justify-content: left;
+}
+.type-filter > button.action {
+    aspect-ratio: unset;
+    max-width: fit-content;
+    padding: 8px;
+}
+
+.gridfield-add-existing-select {
+    width: 22rem;
+    max-width: 100%;
+}
+
+.gridfield-add-existing-select .ts-wrapper {
+    margin: 0;
+}
+
+.gridfield-add-existing-select .ts-control {
+    min-height: 34px;
+    padding: 0.5385rem 2rem 0.5385rem 0.7692rem;
+    border: 1px solid #ced5e1;
+    border-radius: 0.23rem;
+    color: #566b8d;
+    background: #fff;
+    font: inherit;
+}
+
+.gridfield-add-existing-select__error {
+    display: block;
+    margin-top: 0.4rem;
+    color: #b42318;
+}
+
+.gridfield-add-existing-select .ts-control > .item {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gridfield-add-existing-select__error[hidden] {
+    display: none;
+}
+
+.gridfield-add-existing-select__dropdown {
+    z-index: 1100;
+    color: #43536d;
+}
+
+.gridfield-add-new-dropdown {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.gridfield-add-new-dropdown__menu.dropdown-menu {
+    position: fixed;
+    z-index: 1100;
+    float: none;
+    margin: 0;
+    min-width: 12rem;
+    max-width: calc(100vw - 16px);
+    overflow: auto;
+}
+
+.gridfield-add-new-dropdown__menu[hidden] {
+    display: none;
+}
+
+.gridfield-add-new-dropdown__menu .dropdown-item {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}

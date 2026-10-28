@@ -1,6 +1,45 @@
 Silverstripe GridField Pro
 =====================
 
+Compact multi-class creation
+-------------------
+
+`GridFieldAddNewDropdown` renders a **New** dropdown button for multiple allowed
+record types, or a direct creation link if only one type is available. It uses
+the core `GridFieldDetailForm`, not Symbiote's multi-class component.
+
+Configure allowed classes with `setClasses()`, override the label with
+`setTitle()`, and choose placement with the constructor fragment or
+`setFragment()`. Default class discovery uses the GridField model and its
+concrete, creatable subclasses. See the [README](../../README.md#compact-multi-class-creation-button)
+for complete examples, fragment setup and permission behaviour.
+
+Compact AJAX relation selector
+-------------------
+
+`GridFieldAddExistingSelect` replaces `GridFieldAddExistingAutocompleter` with
+a single searchable select. Options are requested while typing, starting at two
+characters (ignoring leading and trailing whitespace); focusing alone does not load records.
+Choosing one immediately links it without a separate button.
+
+```php
+use Clesson\Silverstripe\Forms\GridField\GridFieldAddExistingSelect;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+
+$config->removeComponentsByType(GridFieldAddExistingAutocompleter::class);
+$picker = GridFieldAddExistingSelect::create('buttons-before-right', ['Title:PartialMatch']);
+$picker->setResultsLimit(20);
+$config->addComponent($picker);
+```
+
+Use the component with a saved, editable owner and an ORM relation list.
+`setSearchList()` restricts both search results and accepted IDs. Linking uses
+the standard GridField CSRF-protected form action. Search respects `canView()`
+and excludes records already linked to this GridField.
+
+See the module README for Vite source, build and watch instructions. All existing
+asset paths are preserved; generated CSS/JS and the npm lockfile are distributed.
+
 Toggle boolean values inside tables
 -------------------
 

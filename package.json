@@ -1,0 +1,19 @@
+{
+  "name": "silverstripe-gridfield-pro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "test": "node --test client/src/tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "tom-select": "^2.6.2"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  }
+}

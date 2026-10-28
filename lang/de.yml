@@ -1,4 +1,12 @@
 de:
+  Clesson\Silverstripe\Forms\GridField\GridFieldAddNewDropdown:
+    NEW: 'Neu'
+  Clesson\Silverstripe\Forms\GridField\GridFieldAddExistingSelect:
+    ERROR: 'Der Datensatz konnte nicht geladen oder verknüpft werden. Bitte erneut versuchen.'
+    LOADING: 'Wird geladen...'
+    NO_RESULTS: 'Keine passenden Datensätze gefunden.'
+    MIN_LENGTH: 'Zum Suchen mindestens zwei Zeichen eingeben.'
+    LINK: 'Vorhandenen Datensatz verknüpfen'
   Clesson\Silverstripe\Forms\GridField\GridFieldCalendar:
     BUTTON_TEXT_MULTI_MONTH: '3 Monate'
     BUTTON_TEXT_TODAY: 'Heute'
