@@ -1,0 +1,9 @@
+en:
+  Clesson\Silverstripe\Forms\GridField\GridFieldAddNewDropdown:
+    NEW: 'New'
+  Clesson\Silverstripe\Forms\GridField\GridFieldAddExistingSelect:
+    ERROR: 'The record could not be loaded or linked. Please try again.'
+    LOADING: 'Loading...'
+    NO_RESULTS: 'No matching records found.'
+    MIN_LENGTH: 'Enter at least two characters to search.'
+    LINK: 'Link existing'
