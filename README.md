@@ -5,6 +5,7 @@ This module provides a number of useful grid field components:
 * `GridFieldToggleAction` - toggle the value of a boolean column
 * `GridFieldAddExistingSelect` - compact, searchable AJAX select that links a record immediately on selection
 * `GridFieldAddNewDropdown` - compact "New" action with a menu of record types
+* `GridFieldRecordDates` - creation and modification dates in one member-formatted column
 
 ## Installation
 ```bash
@@ -24,6 +25,50 @@ Rebuild the Silverstripe manifest and flush caches:
 ```
 
 See [docs/en/index.md](docs/en/index.md) for documentation and examples.
+
+## Combined record dates
+
+Add the component to an existing GridField configuration without further setup:
+
+```php
+use Clesson\Silverstripe\Forms\GridField\GridFieldRecordDates;
+
+$config->addComponent(GridFieldRecordDates::create());
+```
+
+The component replaces visible `Created` and `LastEdited` columns with one
+**Created** column at their first position. If neither is present, it appends the
+column. Creation appears on the first line in normal text. Only when the raw
+`LastEdited` timestamp differs at minute precision does a second, smaller line appear:
+**Modified** followed by its date and time (**Geändert** in German).
+For a change on the creation day, it instead shows **Modified at** followed
+only by the time (**Geändert um** in German).
+Date and time are separated by a comma. The German same-day line includes
+the suffix **Uhr**, for example **Geändert um 15:06 Uhr**.
+
+Both timestamps respect the signed-in member's date format, time format and
+locale, but omit seconds and fractional seconds. Differences within the same
+minute do not produce a modification line. Without a signed-in member, the core
+locale formatter with short time applies. Missing timestamps remain empty.
+The combined presentation column requires no frontend assets. To sort it by
+the last modification timestamp, map it through the standard sortable header:
+
+```php
+use SilverStripe\Forms\GridField\GridFieldSortableHeader;
+
+$header = $config->getComponentByType(GridFieldSortableHeader::class);
+$header->setFieldSorting(array_merge(
+    $header->getFieldSorting(),
+    [GridFieldRecordDates::COLUMN => 'LastEdited']
+));
+```
+
+This enables ascending/descending sorting without changing the displayed dates.
+The GridField configuration must include `GridFieldSortableHeader`, as standard
+record-editor configurations do.
+
+Record values are HTML-escaped. The component does not change timestamps or
+permissions and is intended for DataObject-backed GridFields.
 
 ## Compact relation picker
 

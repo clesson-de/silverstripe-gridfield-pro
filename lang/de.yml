@@ -1,4 +1,8 @@
 de:
+  Clesson\Silverstripe\Forms\GridField\GridFieldRecordDates:
+    CREATED: 'Erstellt'
+    MODIFIED: 'Geändert'
+    MODIFIED_AT_TIME: 'Geändert um {time} Uhr'
   Clesson\Silverstripe\Forms\GridField\GridFieldAddNewDropdown:
     NEW: 'Neu'
   Clesson\Silverstripe\Forms\GridField\GridFieldAddExistingSelect:

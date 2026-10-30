@@ -1,6 +1,22 @@
 Silverstripe GridField Pro
 =====================
 
+Combined record dates
+-------------------
+
+Add `GridFieldRecordDates::create()` from
+`Clesson\Silverstripe\Forms\GridField` to a GridField configuration. It replaces
+the standard timestamp columns with one **Created** column, displaying a smaller
+**Modified** line only if the timestamps differ at minute precision. Dates and
+times follow the current member's preferences, with seconds omitted.
+Same-day changes show **Modified at** with only the time instead of repeating the date.
+Full timestamps separate date and time with a comma; German same-day changes
+read **Geändert um 15:06 Uhr**.
+No configuration or assets are required.
+Optional sorting by `LastEdited` uses the standard sortable header's
+`setFieldSorting()` mapping.
+See the [README](../../README.md#combined-record-dates) for details.
+
 Compact multi-class creation
 -------------------
 
