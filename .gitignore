@@ -6,11 +6,9 @@
 composer.lock
 
 # npm / yarn
-package-lock.json
 yarn.lock
 
 # Build output
-/client/dist/
 /client/build/
 
 # Environment & config

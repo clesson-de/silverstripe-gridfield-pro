@@ -1,4 +1,24 @@
 de:
+  Clesson\Silverstripe\Forms\GridField\GridFieldSearch:
+    PLACEHOLDER: 'Suche in {fields}'
+    FIELD_LIST: '{fields} und {last}'
+    CLEAR: 'Suche leeren'
+  Clesson\Silverstripe\Forms\GridField\GridField_CharFilter:
+    LABEL: 'Anfangszeichen'
+    ALL: 'Alle'
+  Clesson\Silverstripe\Constants\GridFieldToolbarLayout:
+    LEFT: 'Links'
+    RIGHT: 'Rechts'
+    CONTENT: 'Inhaltsbreite'
+    GROW: 'Flexible Breite'
+    FULL: 'Volle Breite'
+  Clesson\Silverstripe\Forms\GridField\GridFieldToolbar:
+    LABEL: 'Listensteuerung'
+  Clesson\Silverstripe\Forms\GridField\GridFieldActionMenu:
+    ACTIONS: 'Aktionen'
+    ERROR: 'Die Aktion ist fehlgeschlagen. Bitte erneut versuchen.'
+  Clesson\Silverstripe\Forms\GridField\GridFieldMenuExportButton:
+    EXPORT: 'Als CSV exportieren'
   Clesson\Silverstripe\Forms\GridField\GridFieldRecordDates:
     CREATED: 'Erstellt'
     MODIFIED: 'Geändert'

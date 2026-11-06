@@ -3,15 +3,18 @@
 namespace Clesson\Silverstripe\Forms\GridField;
 
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_DataManipulator;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
 use SilverStripe\Model\List\SS_List;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\View\SSViewer;
+use SilverStripe\View\Requirements;
 
 
 /**
@@ -215,37 +218,61 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
      * @param $gridField
      * @return array
      */
-    public function getHTMLFragments($gridField)
+    public function getHTMLFragments($gridField): array
     {
-        $dataClass = $gridField->getModelClass();
-
-        $forTemplate = new ArrayData([]);
-        $forTemplate->Fields = new FieldList();
-        $selectedChar = $this->getSelectedChar();
-        foreach ($this->getChars() as $key => $char) {
-            $selected = ($char == $selectedChar);
-            $charField = new GridField_FormAction(
-                $gridField,
-                'gridfield_charfilter-' . $key,
-                $char,
-                self::ACTION_NAME,
-                ['char' => $selected ? '' : $char]
-            );
-            $charField->addExtraClass('action_gridfield_charfilter');
-            if ($selected) {
-                $charField->addExtraClass('active');
-            }
-            $forTemplate->Fields->push($charField);
-        }
-
-        if ($form = $gridField->getForm()) {
-            $forTemplate->Fields->setForm($form);
-        }
-
+        Requirements::javascript('clesson-de/silverstripe-gridfield-pro:client/dist/js/silverstripe-gridfield-pro.js');
+        $fields = $this->characterActions($gridField);
+        $select = $this->characterSelect($gridField);
+        $forTemplate = new ArrayData([
+            'Fields' => $fields, 'Select' => $select,
+            'Label' => _t(__CLASS__ . '.LABEL', 'Initial'),
+        ]);
         $template = SSViewer::get_templates_by_class($this, '', __CLASS__);
-        return [
-            $this->_targetFragment => $forTemplate->renderWith($template)
-        ];
+        return [$this->_targetFragment => $forTemplate->renderWith($template)];
+    }
+
+    /** Keeps one native action for every character, including an explicit reset. */
+    private function characterActions(GridField $grid): FieldList
+    {
+        $fields = FieldList::create();
+        $fields->push($this->characterAction($grid, '', _t(__CLASS__ . '.ALL', 'All'), 'all'));
+        foreach ($this->getChars() as $key => $char) {
+            $fields->push($this->characterAction($grid, $char, $char, (string)$key));
+        }
+        if ($form = $grid->getForm()) {
+            $fields->setForm($form);
+        }
+        return $fields;
+    }
+
+    /** Preserves the existing toggle semantics and exposes pressed state accessibly. */
+    private function characterAction(GridField $grid, string $char, string $label, string $key): GridField_FormAction
+    {
+        $selected = $char === $this->getSelectedChar();
+        $action = GridField_FormAction::create(
+            $grid, 'gridfield_charfilter-' . $key, $label, self::ACTION_NAME,
+            ['char' => $selected ? '' : $char]
+        );
+        $action->addExtraClass('action_gridfield_charfilter no-change-track' . ($selected ? ' active' : ''));
+        // FormField omits empty attributes, so reset needs a non-empty DOM key.
+        $action->setAttribute('data-filter-char', $char === '' ? 'all' : $char);
+        $action->setAttribute('aria-pressed', $selected ? 'true' : 'false');
+        return $action;
+    }
+
+    /** Offers a compact mobile alternative using the same server-generated actions. */
+    private function characterSelect(GridField $grid): DropdownField
+    {
+        $chars = $this->getChars();
+        $options = array_combine($chars, $chars);
+        $select = DropdownField::create(
+            $grid->getName() . '_Initial_' . md5($this->getProperty()), '', $options, $this->getSelectedChar()
+        );
+        $select->setEmptyString(_t(__CLASS__ . '.ALL', 'All'));
+        $select->addExtraClass('gridfield-charfilter__select no-chosen no-change-track');
+        $select->setAttribute('aria-label', _t(__CLASS__ . '.LABEL', 'Initial'));
+        $select->setForm($grid->getForm());
+        return $select;
     }
 
     /**
@@ -260,11 +287,13 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
     /**
      * @inheritdoc
      */
-    public function handleAction(GridField $gridField, $actionName, $arguments, $data)
+    public function handleAction(GridField $gridField, $actionName, $arguments, $data): void
     {
         if ($actionName === self::ACTION_NAME) {
             if (isset($arguments['char'])) {
                 $this->setSelectedChar($arguments['char']);
+                $paginator = $gridField->getConfig()->getComponentByType(GridFieldPaginator::class);
+                $paginator?->handleAction($gridField, 'paginate', 1, $data);
             }
         }
     }
@@ -274,7 +303,7 @@ class GridField_CharFilter extends AbstractGridFieldComponent implements GridFie
      */
     public function getManipulatedData(GridField $gridField, SS_List $dataList): SS_List
     {
-        if ($this->getSelectedChar()) {
+        if ($this->getSelectedChar() !== '') {
             return $dataList->filter([$this->getProperty() . ':StartsWith' => (string)$this->getSelectedChar()]);
         }
         return $dataList;

@@ -7,6 +7,10 @@ namespace Clesson\Silverstripe\Tests\GridFieldPro;
 use Clesson\Silverstripe\Forms\GridField\GridFieldAddNewDropdown;
 use Clesson\Silverstripe\Forms\GridField\GridFieldAddNewDropdownItemRequest;
 use LogicException;
+use InvalidArgumentException;
+use SilverStripe\Core\Config\Config;
+use DOMDocument;
+use DOMXPath;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse_Exception;
@@ -129,6 +133,38 @@ class GridFieldAddNewDropdownTest extends SapphireTest
         } finally {
             i18n::set_locale($locale);
         }
+    }
+
+    /** Icons follow normal model config inheritance and can be overridden or suppressed. */
+    public function testOptionalClassIcons(): void
+    {
+        $grid = $this->grid();
+        $component = $this->component($grid)->setClasses([SelectRecord::class, DropdownRecord::class]);
+        self::assertStringNotContainsString('font-icon-torso', (string)$component->getHTMLFragments($grid)['before']);
+        Config::modify()->set(SelectRecord::class, 'class_icon', 'font-icon-torso');
+        self::assertSame(['font-icon-torso', 'font-icon-torso'], $this->menuIcons($component, $grid));
+        Config::modify()->set(DropdownRecord::class, 'class_icon', 'font-icon-sitemap');
+        self::assertSame(['font-icon-torso', 'font-icon-sitemap'], $this->menuIcons($component, $grid));
+        Config::modify()->set(DropdownRecord::class, 'class_icon', '');
+        self::assertSame(['font-icon-torso'], $this->menuIcons($component, $grid));
+    }
+
+    /** Reads only decorative model icons, excluding the creation toggle's plus icon. */
+    private function menuIcons(GridFieldAddNewDropdown $component, GridField $grid): array
+    {
+        $document = new DOMDocument();
+        $document->loadHTML((string)$component->getHTMLFragments($grid)['before'], LIBXML_NOERROR | LIBXML_NOWARNING);
+        $icons = (new DOMXPath($document))->query('//a[@role="menuitem"]/span[@aria-hidden="true"]');
+        return array_map(static fn ($icon) => $icon->getAttribute('class'), iterator_to_array($icons));
+    }
+
+    /** Invalid configuration fails explicitly instead of emitting malformed icon markup. */
+    public function testInvalidClassIconIsRejected(): void
+    {
+        $grid = $this->grid();
+        Config::modify()->set(SelectRecord::class, 'class_icon', 'icon" onclick="alert(1)');
+        $this->expectException(InvalidArgumentException::class);
+        $this->component($grid)->getHTMLFragments($grid);
     }
 
     /** Only an explicitly permitted token can open the selected record's creation form. */

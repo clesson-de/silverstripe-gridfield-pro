@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Clesson\Silverstripe\Forms\GridField;
 
 use LogicException;
+use InvalidArgumentException;
 use ReflectionClass;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse_Exception;
@@ -28,6 +29,9 @@ use SilverStripe\View\Requirements;
  */
 class GridFieldAddNewDropdown extends AbstractGridFieldComponent implements GridField_HTMLProvider, GridField_URLHandler
 {
+    /** Optional model configuration containing the CSS class for its creation-menu icon. */
+    public const CLASS_ICON_CONFIG = 'class_icon';
+
     /** Allows the component's class-specific creation route. */
     private static array $allowed_actions = ['handleAdd'];
 
@@ -139,10 +143,24 @@ class GridFieldAddNewDropdown extends AbstractGridFieldComponent implements Grid
         foreach ($classes as $class => $label) {
             $choices->push(ArrayData::create([
                 'Label' => $label,
+                'Icon' => $this->classIcon($class),
                 'Link' => Controller::join_links($grid->Link('new-class'), str_replace('\\', '-', $class)),
             ]));
         }
         return $choices;
+    }
+
+    /** Resolves inherited/YAML model configuration without requiring icons on existing models. */
+    private function classIcon(string $class): ?string
+    {
+        $icon = $class::config()->get(self::CLASS_ICON_CONFIG);
+        if ($icon === null || $icon === '') {
+            return null;
+        }
+        if (!is_string($icon) || !preg_match('/^[a-zA-Z_][a-zA-Z0-9_-]*$/D', $icon)) {
+            throw new InvalidArgumentException($class . '.class_icon must be a single CSS class name or null.');
+        }
+        return $icon;
     }
 
     /** Keeps unsaved forms on their class-specific route. */

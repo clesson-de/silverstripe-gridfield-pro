@@ -213,6 +213,8 @@ class GridField_ButtonFilter extends AbstractGridFieldComponent implements GridF
                 ['value' => (string) $filterValue]
             );
             $typeField->addExtraClass('action_gridfield_buttonfilter');
+            $typeField->setAttribute('aria-pressed', $selected ? 'true' : 'false');
+            $typeField->addExtraClass('no-change-track');
 
             if ($selected) {
                 $typeField->addExtraClass('active');

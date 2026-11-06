@@ -6,6 +6,9 @@ This module provides a number of useful grid field components:
 * `GridFieldAddExistingSelect` - compact, searchable AJAX select that links a record immediately on selection
 * `GridFieldAddNewDropdown` - compact "New" action with a menu of record types
 * `GridFieldRecordDates` - creation and modification dates in one member-formatted column
+* `GridFieldToolbar` - responsive left/right groups, named slots and full-width rows
+* `GridFieldActionMenu` - native GridField actions, navigation and downloads in one menu
+* `GridFieldSearch` - buttonless free-text filtering submitted explicitly with Enter
 
 ## Installation
 ```bash
@@ -25,6 +28,95 @@ Rebuild the Silverstripe manifest and flush caches:
 ```
 
 See [docs/en/index.md](docs/en/index.md) for documentation and examples.
+
+## Responsive toolbar and action menus
+
+These components are opt-in. Existing GridFields do not change automatically.
+See the [toolbar developer guide](docs/en/toolbar.md) for named slots, migration,
+secure action providers, downloads, readonly support and mobile behaviour.
+
+```php
+use Clesson\Silverstripe\Forms\GridField\GridFieldActionMenu;
+use Clesson\Silverstripe\Forms\GridField\GridFieldMenuExportButton;
+use Clesson\Silverstripe\Forms\GridField\GridFieldToolbar;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+
+$toolbar = GridFieldToolbar::install($config);
+$config->removeComponentsByType(GridFieldExportButton::class);
+$config->addComponent(GridFieldMenuExportButton::create());
+$config->addComponent(
+    GridFieldActionMenu::create()->addProvider(GridFieldMenuExportButton::class)
+);
+```
+
+`install()` replaces only the core button row at the selected position, leaving
+other components and the other position unchanged. Existing components targeting
+`buttons-before-left` / `buttons-before-right` flow in their corresponding groups.
+The CSV adapter defaults to **ADMIN-only** permission; configure a checker for
+other users. When replacing an existing export, retain its configured columns,
+separator and enclosure settings as described in the guide.
+
+## Toolbar free-text search
+
+CMS GridField selects can opt into an always-searchable Chosen dropdown using
+`no-chosen gridfield-searchable-dropdown` classes and an `aria-label`. The former
+disables the CMS default initializer; the shared assets initialize only the
+opt-in select, with substring matching and no minimum option count. Give its
+wrapper an explicit responsive width. Typing filters options locally; the
+existing select change handler still controls submission.
+
+`GridFieldSearch` filters the current ORM-backed list using case-insensitive
+partial matches in any of the explicitly configured fields. Related database
+fields are supported. Existing list restrictions, relations and other filters
+remain in effect. The component is opt-in and does not replace core search globally.
+
+```php
+use Clesson\Silverstripe\Constants\GridFieldToolbarLayout as Layout;
+use Clesson\Silverstripe\Forms\GridField\GridFieldSearch;
+use Clesson\Silverstripe\Forms\GridField\GridFieldToolbar;
+
+$toolbar = GridFieldToolbar::install($config);
+$slot = $toolbar->addItem('search', Layout::RIGHT, Layout::GROW);
+$search = GridFieldSearch::create(['Title', 'Description'], $slot->getFragment());
+$config->addComponent($search);
+```
+
+The constructor requires a non-empty array of database field paths, followed by
+an optional native fragment (default: `buttons-before-left`). No toolbar is
+required when using a normal fragment. `DataList` and ORM relation lists are
+supported; in-memory lists and unknown fields produce configuration errors.
+Field paths cannot contain search-filter modifiers.
+
+The placeholder uses translated model field labels and localized punctuation,
+for example **Suche in Name**, **Suche in Name und Beschreibung**, or
+**Suche in Name, Titel und Beschreibung**. Relation labels are resolved on the
+related model. Supply a field-to-translated-label map for custom wording:
+
+```php
+$search = GridFieldSearch::create([
+    'Name' => _t('App.ContactSearch.NAME', 'Name'),
+    'Account.Email' => _t('App.ContactSearch.EMAIL', 'Email'),
+    'Address.Summary' => _t('App.ContactSearch.ADDRESS', 'Address'),
+], $slot->getFragment());
+```
+
+This is also the field scope used in the contact overview. In that application,
+the linked member's email is its login identifier; it is not searched twice.
+
+There is no visible search/submit button and no automatic submission.
+Press **Enter** to apply any term, including short terms. The X control
+clears and focuses the input and immediately submits the empty search.
+Enter during IME composition does not submit.
+
+Enter navigates to the current page with Silverstripe's native URL GridState.
+There is no AJAX search request or custom DOM replacement. The complete page
+reloads, so all toolbar components initialize normally. Searching does not submit
+or save the enclosing CMS edit form. Search terms are visible in the URL.
+
+Terms are limited to 200 characters. Each submitted search resets a present
+`GridFieldPaginator` to page one. Other filter/sort state is preserved; unrelated
+GridFields and URL parameters are not changed. The previous automatic-search
+configuration and `setAutomaticSearch()` API have been removed.
 
 ## Combined record dates
 
@@ -148,6 +240,21 @@ automatically. Only compatible DataObject classes with `canCreate()` permission
 are offered; relation owners are passed in the permission context as `Parent`.
 The default menu labels are the models' translated singular names.
 
+Menu entries optionally show the model's `class_icon` before their label:
+
+```php
+/** Optional CSS icon for class-aware creation menus. */
+private static string $class_icon = 'font-icon-torso';
+```
+
+Set this property inside the DataObject class, or configure `class_icon` under
+its fully qualified class name in YAML. Normal Silverstripe config inheritance
+and overrides apply. Use a single CSS class whose stylesheet is loaded in the
+CMS (for example a built-in `font-icon-*`). Missing, `null` or empty values show
+only the text; an empty override also suppresses an inherited icon. Icons are
+decorative, so the readable label remains unchanged. The single-type **New**
+button retains its plus icon.
+
 Supply a list of classes or a class-to-label map to restrict the choices:
 
 ```php
@@ -200,8 +307,10 @@ development server or HMR integration: the CMS always loads the compiled files.
 | `client/src/legacy.js` | Existing GridField JavaScript retained for backwards compatibility |
 | `client/src/add-existing-select.js` | Tom Select initialisation, search lifecycle and automatic linking |
 | `client/src/add-new-dropdown.js` | Multi-class creation menu, keyboard interaction, positioning and refresh cleanup |
+| `client/src/dropdown-menu.js` | Shared accessible dropdown behaviour and mobile viewport positioning |
+| `client/src/action-menu.js`, `client/src/action-request.js` | Action-menu lifecycle, native POST request locking and error recovery |
 | `client/src/remote-options.js` | AJAX transport and response validation; resolves URLs against the document base |
-| `client/src/tests/` | JavaScript tests using Node's built-in test runner |
+| `client/src/tests/` | Node test runner tests, with jsdom for menu lifecycle tests |
 | `vite.config.js` | IIFE build configuration and stable output filenames |
 
 Add new CSS or JavaScript modules under `client/src/` and import them from

@@ -1,6 +1,32 @@
 Silverstripe GridField Pro
 =====================
 
+Responsive toolbar and action menus
+-------------------
+
+`GridFieldToolbar` replaces a selected core button row with responsive
+left/right groups and named slots, including dedicated full-width rows.
+`GridFieldActionMenu` presents explicitly registered action providers without
+replacing their action or URL handlers. Both can be installed independently.
+
+The [toolbar developer guide](toolbar.md) covers configuration, compatibility,
+secure service-backed actions, CSV downloads, readonly transformations and
+mobile/touch support.
+
+Toolbar free-text search
+-------------------
+
+`GridFieldSearch` provides a single search field with a search/clear icon and no
+submit button. Explicitly configured ORM fields (including relation paths) are
+matched using case-insensitive partial matching. Enter submits a search,
+using full-page navigation with native URL GridState and resetting paging.
+There is no automatic submission while typing or AJAX search. X clears the input
+and immediately submits the empty search.
+
+See [the README](../../README.md#toolbar-free-text-search) and
+[toolbar integration](toolbar.md#free-text-search-in-a-toolbar-slot) for setup,
+localized placeholders and configuration examples.
+
 Combined record dates
 -------------------
 
