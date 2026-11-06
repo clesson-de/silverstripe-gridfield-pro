@@ -1,0 +1,6 @@
+---
+Name: gridfield-pro-extensions
+---
+SilverStripe\Forms\GridField\GridField:
+  extensions:
+    gridfield-pro-readonly: Clesson\Silverstripe\Extensions\GridFieldToolbarReadonlyExtension
